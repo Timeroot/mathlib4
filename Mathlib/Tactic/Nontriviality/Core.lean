@@ -5,6 +5,7 @@ Authors: Sébastien Gouëzel, Mario Carneiro
 -/
 import Qq.MetaM
 import Mathlib.Logic.Nontrivial.Basic
+import Mathlib.Order.Nontrivial
 import Mathlib.Tactic.Attr.Core
 
 /-! # The `nontriviality` tactic. -/
@@ -52,7 +53,7 @@ and local hypotheses.
 def nontrivialityByAssumption (g : MVarId) : MetaM Unit := do
   g.inferInstance <|> do
     _ ← processSyntax {maxDepth := 6}
-      false false [← `(nontrivial_of_ne), ← `(nontrivial_of_lt)] [] #[] [g]
+      false false [← ``(nontrivial_of_ne), ← ``(nontrivial_of_lt)] [] #[] [g]
 
 /-- Attempts to generate a `Nontrivial α` hypothesis.
 

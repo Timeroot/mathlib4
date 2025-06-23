@@ -7,7 +7,6 @@ import Mathlib.Data.Prod.Basic
 import Mathlib.Logic.Function.Basic
 import Mathlib.Logic.Nontrivial.Defs
 import Mathlib.Logic.Unique
-import Mathlib.Order.Defs.LinearOrder
 import Mathlib.Tactic.Attr.Register
 
 /-!
@@ -18,20 +17,9 @@ Results about `Nontrivial`.
 
 variable {α : Type*} {β : Type*}
 
--- `x` and `y` are explicit here, as they are often needed to guide typechecking of `h`.
-theorem nontrivial_of_lt [Preorder α] (x y : α) (h : x < y) : Nontrivial α :=
-  ⟨⟨x, y, ne_of_lt h⟩⟩
-
-theorem exists_pair_lt (α : Type*) [Nontrivial α] [LinearOrder α] : ∃ x y : α, x < y := by
-  rcases exists_pair_ne α with ⟨x, y, hxy⟩
-  cases lt_or_gt_of_ne hxy <;> exact ⟨_, _, ‹_›⟩
-
-theorem nontrivial_iff_lt [LinearOrder α] : Nontrivial α ↔ ∃ x y : α, x < y :=
-  ⟨fun h ↦ @exists_pair_lt α h _, fun ⟨x, y, h⟩ ↦ nontrivial_of_lt x y h⟩
-
 theorem Subtype.nontrivial_iff_exists_ne (p : α → Prop) (x : Subtype p) :
-    Nontrivial (Subtype p) ↔ ∃ (y : α) (_ : p y), y ≠ x := by
-  simp only [_root_.nontrivial_iff_exists_ne x, Subtype.exists, Ne, Subtype.ext_iff]
+    Nontrivial (Subtype p) ↔ ∃ (y : α), p y ∧ y ≠ x := by
+  simp [_root_.nontrivial_iff_exists_ne x, Subtype.ext_iff]
 
 open Classical in
 /-- An inhabited type is either nontrivial, or has a unique element. -/
@@ -93,7 +81,3 @@ end Pi
 
 instance Function.nontrivial [h : Nonempty α] [Nontrivial β] : Nontrivial (α → β) :=
   h.elim fun a ↦ Pi.nontrivial_at a
-
-@[nontriviality]
-protected theorem Subsingleton.le [Preorder α] [Subsingleton α] (x y : α) : x ≤ y :=
-  le_of_eq (Subsingleton.elim x y)
